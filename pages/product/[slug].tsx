@@ -1,17 +1,53 @@
 import { ShopLayout } from '@/components/layout'
 import { ProductSlideshow, SizeSelector } from '@/components/products';
 import { ItemCounter } from '@/components/ui';
+import { CartContext } from '@/context';
 import { dbProducts } from '@/database';
-import { IProduct } from '@/interfaces';
+import { ICartProduct, IProduct, ISize } from '@/interfaces';
 import { Box, Button, Chip, Grid, Typography } from '@mui/material';
 import { NextPage, GetServerSideProps, GetStaticPaths, GetStaticProps } from 'next'
-import { getProductBySlug, getAllProductSlugs } from '../../database/dbProducts';
 
 interface ISlugProps {
     product: IProduct
 }
 
 const ProductPage: NextPage<ISlugProps> = ({ product }) => {
+
+    const router = useRouter();
+    const { addProductToCart } = useContext(CartContext);
+
+    const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
+        _id: product._id,
+        image: product.images[0],
+        price: product.price,
+        size: undefined,
+        slug: product.slug,
+        title: product.title,
+        gender: product.gender,
+        quantity: 2
+    })
+
+    const selectedSize = (size: ISize) => {
+        setTempCartProduct(currentProduct => ({
+            ...currentProduct,
+            size
+        }))
+    }
+
+    const onUpdateQuantity = (quantity: number) => {
+        setTempCartProduct(currentProduct => ({
+            ...currentProduct,
+            quantity
+        }))
+    }
+
+    const onAddProduct = () => {
+
+        if (!tempCartProduct.size) return;
+
+        addProductToCart(tempCartProduct);
+        // router.push('/product/cart')
+    }
 
     return (
         <ShopLayout title={product.title} pageDescription={product.description}>
@@ -28,14 +64,30 @@ const ProductPage: NextPage<ISlugProps> = ({ product }) => {
 
                         <Box sx={{ my: 2 }}>
                             <Typography variant='subtitle2'>Cantidad</Typography>
-                            <ItemCounter />
-                            <SizeSelector selectedSize={product.sizes[1]} sizes={product.sizes} />
+
+                            <ItemCounter
+                                currentValue={tempCartProduct.quantity}
+                                updatedQuantity={(value) => onUpdateQuantity(value)}
+                                maxValue={product.inStock > 5 ? 5 : product.inStock} />
+
+                            <SizeSelector
+                                selectedSize={tempCartProduct.size}
+                                sizes={product.sizes}
+                                onSelectedSize={selectedSize}
+                            />
                         </Box>
 
                         {/* Agregar al carrito */}
-                        <Button color='secondary' className='circular-btn'>Agregar al carrito</Button>
 
-                        {/* <Chip label="No hay disponibles" color='error' variant='outlined' /> */}
+                        {
+                            product.inStock > 0 ? (
+                                <Button color='secondary' className='circular-btn' onClick={onAddProduct}>
+                                    {tempCartProduct.size ? 'Agregar al carrito' : 'Seleccione una talla'}
+                                </Button>
+                            ) : (
+                                <Chip label="No hay disponibles" color='error' variant='outlined' />
+                            )
+                        }
 
                         {/* Description */}
                         <Box sx={{ mt: 3 }}>
@@ -70,6 +122,8 @@ const ProductPage: NextPage<ISlugProps> = ({ product }) => {
 
 // You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
 import { } from 'next'
+import { useRouter } from 'next/router';
+import { useContext, useState } from 'react';
 
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
