@@ -19,7 +19,7 @@ export const CartList: React.FC<ICartListProps> = ({ editable = false }) => {
     return (
         <>
             {cart.map((product) => (
-                <Grid container spacing={2} sx={{ mb: 1 }} key={product.slug}>
+                <Grid container spacing={2} sx={{ mb: 1 }} key={product.slug + product.size}>
                     <Grid item xs={3}>
                         <LinkNext href={`/product/${product.slug}`} passHref>
                             <CardActionArea>

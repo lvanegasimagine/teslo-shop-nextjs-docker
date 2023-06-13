@@ -5,10 +5,18 @@ import Cookie from 'js-cookie';
 
 export interface CartState {
     cart: ICartProduct[];
+    numberOfItems: number;
+    subTotal: number;
+    tax: number;
+    total: number;
 }
 
 const CART_INITIAL_STATE: CartState = {
-    cart: []
+    cart: [],
+    numberOfItems: 0,
+    subTotal: 0,
+    tax: 0,
+    total: 0
 }
 
 export const CartProvider = ({ children }: { children: JSX.Element }) => {
@@ -49,8 +57,9 @@ export const CartProvider = ({ children }: { children: JSX.Element }) => {
             tax: subTotal * taxRate,
             total: subTotal * ( taxRate + 1 )
         }
+        console.log("🚀 ~ file: CartProvider.tsx:47 ~ useEffect ~ orderSummary:", orderSummary)
 
-        // dispatch({ type: '[Cart] - Update order summary', payload: orderSummary });
+        dispatch({ type: '[Cart] - Update order summary', payload: orderSummary });
     }, [state.cart]);
 
 
