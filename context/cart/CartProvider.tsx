@@ -1,6 +1,7 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { CartContext, cartReducer } from "./";
-import { ICartProduct } from "@/interfaces";
+import { ICartProduct, IProduct } from "@/interfaces";
+import Cookie from 'js-cookie';
 
 export interface CartState {
     cart: ICartProduct[];
@@ -12,6 +13,25 @@ const CART_INITIAL_STATE: CartState = {
 
 export const CartProvider = ({ children }: { children: JSX.Element }) => {
     const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
+
+    // Efecto
+    useEffect(() => {
+        console.log('primero')
+        try {
+            const cookieProducts = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : undefined
+            console.log("🚀 ~ file: CartProvider.tsx:22 ~ useEffect ~ cookieProducts:", cookieProducts)
+            dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: cookieProducts });
+        } catch (error) {
+            dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: [] });
+        }
+    }, []);
+
+
+    useEffect(() => {
+        console.log('segundo')
+        Cookie.set('cart', JSON.stringify(state.cart));
+    }, [state.cart]);
+
 
     const addProductToCart = (product: ICartProduct) => {
         const productInCart = state.cart.some(p => p._id === product._id); // * El metodo some devuelve un valor boolean
@@ -38,10 +58,19 @@ export const CartProvider = ({ children }: { children: JSX.Element }) => {
 
         dispatch({ type: '[Cart] - Update products in cart', payload: updatedProducts });
 
+        Cookie.set('cart', JSON.stringify(state.cart));
+    }
+
+    const updateCartQuantity = (product: ICartProduct) => {
+        dispatch({ type: '[Cart] - Change cart quantity', payload: product })
+    }
+
+    const removeCartQuantity = (product: ICartProduct) => {
+        dispatch({ type: '[Cart] - Remove product in cart', payload: product })
     }
 
     return (
-        <CartContext.Provider value={{ ...state, addProductToCart }}>
+        <CartContext.Provider value={{ ...state, addProductToCart, updateCartQuantity, removeCartQuantity }}>
             {children}
         </CartContext.Provider>
     )
