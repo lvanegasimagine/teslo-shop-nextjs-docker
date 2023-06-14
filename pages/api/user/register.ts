@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { db } from '@/database'
 import { User } from '@/models'
 import bcrypt from 'bcryptjs';
-import { jwt } from '@/utils';
+import { jwt, validations } from '@/utils';
 
 type Data =
     | { message: string }
@@ -24,8 +24,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 const registerUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     const { email = '', password = '', name = '' } = req.body as { email: string, password: string, name: string };
 
-    if (password.length < 6) return res.status(400).json({ message: 'La contraseña debe de ser 6 caracteres' })
-    if (name.length < 2) return res.status(400).json({ message: 'El nombre debe de ser de 2 caracteres' })
+    if (password.length < 6) return res.status(400).json({ message: 'La contraseña debe de ser 6 caracteres' });
+    if (name.length < 2) return res.status(400).json({ message: 'El nombre debe de ser de 2 caracteres' });
+    if (!validations.isValidEmail(email)) return res.status(400).json({ message: 'El correo no tiene un formato valido' });
 
     await db.connect();
     const user = await User.findOne({ email });
