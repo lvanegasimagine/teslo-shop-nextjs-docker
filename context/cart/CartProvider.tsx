@@ -27,7 +27,6 @@ export const CartProvider = ({ children }: { children: JSX.Element }) => {
         console.log('primero')
         try {
             const cookieProducts = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : undefined
-            console.log("🚀 ~ file: CartProvider.tsx:22 ~ useEffect ~ cookieProducts:", cookieProducts)
             dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: cookieProducts });
         } catch (error) {
             dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: [] });

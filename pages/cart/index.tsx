@@ -3,10 +3,12 @@ import React from 'react'
 import { Typography, Grid, Card, CardContent, Divider, Box, Button } from '@mui/material';
 import { CartList, OrderSummary } from '@/components/cart';
 import { NextPage } from 'next';
+import EmptyPage from './empty';
 
 const CartPage: NextPage = () => {
     return (
         <ShopLayout title='Carrito - 3' pageDescription='Carrito de compras de la tienda'>
+            {/* <EmptyPage/> */}
             <Typography variant="h1" component='h1'>Carrito</Typography>
             <Grid container>
                 <Grid item xs={12} md={7}>

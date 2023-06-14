@@ -7,7 +7,7 @@ import { ChangeEvent, useContext, useState, KeyboardEvent } from 'react';
 export const Navbar = () => {
     const { push, asPath } = useRouter();
     const { toggleSideMenu } = useContext(UiContext);
-    const { numberOfItems } = useContext(CartContext);
+    const { numberOfItems, cart } = useContext(CartContext);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearchVisible, setIsSearchVisible] = useState(false)
@@ -89,7 +89,7 @@ export const Navbar = () => {
                 </IconButton>
                 <Link href='/cart'>
                     <IconButton>
-                        <Badge badgeContent={numberOfItems > 9 ? '+9' : numberOfItems} color="secondary">
+                        <Badge badgeContent={cart.length > 9 ? '+9' : cart.length} color="secondary">
                             <ShoppingCartOutlined />
                         </Badge>
                     </IconButton>
