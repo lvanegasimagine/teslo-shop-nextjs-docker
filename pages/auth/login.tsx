@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Link from 'next/link';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
@@ -7,6 +7,8 @@ import { Box, Grid, Typography, TextField, Button, Chip } from '@mui/material'
 import { validations } from '@/utils';
 import { tesloApi } from '@/api';
 import { ErrorOutline } from '@mui/icons-material';
+import { AuthContext } from '@/context';
+import { useRouter } from 'next/router';
 
 type FormData = {
     email: string;
@@ -14,6 +16,8 @@ type FormData = {
 };
 
 const LoginPage = () => {
+    const router = useRouter();
+    const { loginUser } = useContext(AuthContext);
 
     const [showError, setShowError] = useState(false);
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
@@ -21,22 +25,18 @@ const LoginPage = () => {
     const onLoginUser = async ({ email, password }: FormData) => {
         setShowError(false);
 
-        try {
-            const { data } = await tesloApi.post('/user/login', { email, password });
-            console.log("🚀 ~ file: login.tsx:22 ~ onLoginUser ~ data:", data)
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.log(error?.response?.data?.message);
-            }
-            setShowError(true)
+        const isValidLogin = await loginUser(email, password);
+
+        if (!isValidLogin) {
+            setShowError(true);
             setTimeout(() => { setShowError(false) }, 3000);
         }
 
-        //Todo: Navegar a la pantalla que el usuario estaba
+        router.replace('/')
     }
 
     return (
-        <AuthLayout title="Ingresar">
+        <AuthLayout title="Teslo-Shop | Iniciar Sesion">
             <form onSubmit={handleSubmit(onLoginUser)} autoComplete='off'>
                 <Box sx={{ width: 350, padding: '10px 20px' }}>
                     <Grid container spacing={2}>
