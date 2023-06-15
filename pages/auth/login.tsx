@@ -1,11 +1,12 @@
-import { AuthLayout } from '@/components/layout/AuthLayout'
-import { Box, Grid, Typography, TextField, Button } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link';
+import axios from 'axios';
 import { useForm } from 'react-hook-form';
+import { AuthLayout } from '@/components/layout/AuthLayout'
+import { Box, Grid, Typography, TextField, Button, Chip } from '@mui/material'
 import { validations } from '@/utils';
 import { tesloApi } from '@/api';
-import axios from 'axios';
+import { ErrorOutline } from '@mui/icons-material';
 
 type FormData = {
     email: string;
@@ -14,17 +15,21 @@ type FormData = {
 
 const LoginPage = () => {
 
+    const [showError, setShowError] = useState(false);
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
 
     const onLoginUser = async ({ email, password }: FormData) => {
+        setShowError(false);
+
         try {
             const { data } = await tesloApi.post('/user/login', { email, password });
             console.log("🚀 ~ file: login.tsx:22 ~ onLoginUser ~ data:", data)
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                alert(error?.response?.data?.message);
+                console.log(error?.response?.data?.message);
             }
-            console.log('Error en las credenciales')
+            setShowError(true)
+            setTimeout(() => { setShowError(false) }, 3000);
         }
     }
 
@@ -35,6 +40,7 @@ const LoginPage = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <Typography variant="h1" component="h1" >Iniciar Sesion</Typography>
+                            <Chip label="No reconocemos ese usuario / contraseña" color="error" sx={{ display: showError ? 'flex' : 'none' }} icon={<ErrorOutline />} className='fadeIn' />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
