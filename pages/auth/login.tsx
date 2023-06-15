@@ -4,6 +4,8 @@ import React from 'react'
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { validations } from '@/utils';
+import { tesloApi } from '@/api';
+import axios from 'axios';
 
 type FormData = {
     email: string;
@@ -13,10 +15,17 @@ type FormData = {
 const LoginPage = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
-    console.log("🚀 ~ file: login.tsx:15 ~ LoginPage ~ errors:", errors)
 
-    const onLoginUser = (data: FormData) => {
-        console.log("🚀 ~ file: login.tsx:17 ~ LoginPage ~ data:", data)
+    const onLoginUser = async ({ email, password }: FormData) => {
+        try {
+            const { data } = await tesloApi.post('/user/login', { email, password });
+            console.log("🚀 ~ file: login.tsx:22 ~ onLoginUser ~ data:", data)
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                alert(error?.response?.data?.message);
+            }
+            console.log('Error en las credenciales')
+        }
     }
 
     return (
