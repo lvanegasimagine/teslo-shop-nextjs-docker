@@ -31,6 +31,8 @@ const LoginPage = () => {
             setShowError(true)
             setTimeout(() => { setShowError(false) }, 3000);
         }
+
+        //Todo: Navegar a la pantalla que el usuario estaba
     }
 
     return (
