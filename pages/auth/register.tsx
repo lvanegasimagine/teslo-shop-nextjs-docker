@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { Box, Grid, Typography, TextField, Button, Chip } from '@mui/material'
@@ -7,6 +7,8 @@ import { validations } from '@/utils';
 import { tesloApi } from '@/api';
 import axios from 'axios';
 import { ErrorOutline } from '@mui/icons-material';
+import { useRouter } from 'next/router';
+import { AuthContext } from '@/context';
 
 type FormData = {
     name: string;
@@ -15,23 +17,25 @@ type FormData = {
 };
 
 const RegisterPage = () => {
+    const router = useRouter();
+    const { registerUser } = useContext(AuthContext);
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
     const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const onRegisterForm = async ({ name, email, password }: FormData) => {
         setShowError(false);
 
-        try {
-            const { data } = await tesloApi.post('/user/register', { name, email, password });
-            const { token, user } = data;
-            console.log({ token, user });
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.log(error?.response?.data?.message);
-            }
+        const { hasError, message } = await registerUser(name, email, password);
+
+        if (hasError) {
             setShowError(true)
+            setErrorMessage(message!)
             setTimeout(() => { setShowError(false) }, 3000);
+            return;
         }
+        
+        router.replace('/')
 
         //Todo: Navegar a la pantalla que el usuario estaba
     }

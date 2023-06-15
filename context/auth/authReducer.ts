@@ -2,12 +2,12 @@ import { IUser } from "@/interfaces";
 import { AuthState } from "./AuthProvider";
 
 type AuthActionType =
-    | { type: '[Auth] - Login', payload: IUser }
+    | { type: '[Auth] - Login | Register', payload: IUser }
     | { type: '[Auth] - Logout' }
 
 export const authReducer = (state: AuthState, action: AuthActionType): AuthState => {
     switch (action.type) {
-        case '[Auth] - Login':
+        case '[Auth] - Login | Register':
             return {
                 ...state,
                 isLoggedIn: true,

@@ -41,7 +41,7 @@ const LoginPage = () => {
                 <Box sx={{ width: 350, padding: '10px 20px' }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant="h1" component="h1" >Iniciar Sesion</Typography>
+                            <Typography variant="h1" component="h1" alignItems={'center'} >Iniciar Sesion</Typography>
                             <Chip label="No reconocemos ese usuario / contraseña" color="error" sx={{ display: showError ? 'flex' : 'none' }} icon={<ErrorOutline />} className='fadeIn' />
                         </Grid>
                         <Grid item xs={12}>
