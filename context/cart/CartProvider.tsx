@@ -4,6 +4,7 @@ import { ICartProduct, IProduct } from "@/interfaces";
 import Cookie from 'js-cookie';
 
 export interface CartState {
+    isLoaded: boolean;
     cart: ICartProduct[];
     numberOfItems: number;
     subTotal: number;
@@ -12,6 +13,7 @@ export interface CartState {
 }
 
 const CART_INITIAL_STATE: CartState = {
+    isLoaded: false,
     cart: [],
     numberOfItems: 0,
     subTotal: 0,
@@ -22,7 +24,6 @@ const CART_INITIAL_STATE: CartState = {
 export const CartProvider = ({ children }: { children: JSX.Element }) => {
     const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
 
-    // Efecto
     useEffect(() => {
         try {
             const cookieProducts = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : []
@@ -39,11 +40,10 @@ export const CartProvider = ({ children }: { children: JSX.Element }) => {
 
 
     useEffect(() => {
-        
         const numberOfItems = state.cart.reduce( ( prev, current ) => current.quantity + prev , 0 );
         const subTotal = state.cart.reduce( ( prev, current ) => (current.price * current.quantity) + prev, 0 );
         const taxRate =  Number(process.env.NEXT_PUBLIC_TAX_RATE || 0);
-    
+
         const orderSummary = {
             numberOfItems,
             subTotal,

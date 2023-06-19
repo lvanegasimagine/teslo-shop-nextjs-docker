@@ -34,8 +34,7 @@ const RegisterPage = () => {
             setTimeout(() => { setShowError(false) }, 3000);
             return;
         }
-        
-        //Todo: Navegar a la pantalla que el usuario estaba
+
         const destination = router.query.p?.toString() || '/';
         router.replace(destination)
     }
