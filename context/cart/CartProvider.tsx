@@ -24,9 +24,8 @@ export const CartProvider = ({ children }: { children: JSX.Element }) => {
 
     // Efecto
     useEffect(() => {
-        console.log('primero')
         try {
-            const cookieProducts = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : undefined
+            const cookieProducts = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : []
             dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: cookieProducts });
         } catch (error) {
             dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: [] });
@@ -35,14 +34,9 @@ export const CartProvider = ({ children }: { children: JSX.Element }) => {
 
 
     useEffect(() => {
-        console.log('segundo')
         Cookie.set('cart', JSON.stringify(state.cart));
     }, [state.cart]);
 
-    useEffect(() => {
-        console.log('segundo')
-        Cookie.set('cart', JSON.stringify(state.cart));
-    }, [state.cart]);
 
     useEffect(() => {
         

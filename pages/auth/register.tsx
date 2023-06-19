@@ -35,9 +35,9 @@ const RegisterPage = () => {
             return;
         }
         
-        router.replace('/')
-
         //Todo: Navegar a la pantalla que el usuario estaba
+        const destination = router.query.p?.toString() || '/';
+        router.replace(destination)
     }
 
     return (
@@ -94,7 +94,7 @@ const RegisterPage = () => {
                             <Button color='secondary' size="large" fullWidth className='circular-btn' type="submit">Crear Cuenta</Button>
                         </Grid>
                         <Grid item xs={12} display={'flex'} justifyContent={'end'}>
-                            <Link href="/auth/login">
+                            <Link href={router.query.p ? `/auth/login?p=${router.query.p}` : '/auth/login'}>
                                 Ya tienes una cuenta?
                             </Link>
                         </Grid>

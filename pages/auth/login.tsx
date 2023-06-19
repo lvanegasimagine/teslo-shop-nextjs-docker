@@ -32,7 +32,8 @@ const LoginPage = () => {
             setTimeout(() => { setShowError(false) }, 3000);
         }
 
-        router.replace('/')
+        const destination = router.query.p?.toString() || '/';
+        router.replace(destination)
     }
 
     return (
@@ -41,7 +42,7 @@ const LoginPage = () => {
                 <Box sx={{ width: 350, padding: '10px 20px' }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant="h1" component="h1" alignItems={'center'} >Iniciar Sesion</Typography>
+                            <Typography variant="h1" component="h1" textAlign={'center'} >Iniciar Sesion</Typography>
                             <Chip label="No reconocemos ese usuario / contraseña" color="error" sx={{ display: showError ? 'flex' : 'none' }} icon={<ErrorOutline />} className='fadeIn' />
                         </Grid>
                         <Grid item xs={12}>
@@ -76,7 +77,7 @@ const LoginPage = () => {
                             <Button color='secondary' size="large" fullWidth className='circular-btn' type="submit">Ingresar</Button>
                         </Grid>
                         <Grid item xs={12} display={'flex'} justifyContent={'end'}>
-                            <Link href="/auth/register">
+                            <Link href={router.query.p ? `/auth/register?p=${router.query.p}` : '/auth/register'}>
                                 No tienes Cuenta?
                             </Link>
                         </Grid>
